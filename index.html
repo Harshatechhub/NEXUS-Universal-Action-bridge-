@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEXUS — Universal Action Bridge</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="container">
+
+        <header>
+            <div class="badge">⚡ AI-POWERED ACTION BRIDGE</div>
+            <h1>NEXUS</h1>
+            <p class="tagline">From Human Intent to Structured Action.</p>
+            <p class="description">
+                Turn messy real-world problems into clear, actionable intelligence.
+            </p>
+        </header>
+
+        <main>
+
+            <section class="input-card">
+                <div class="section-title">
+                    <span>📝</span>
+                    <h2>Describe the Problem</h2>
+                </div>
+
+                <textarea
+                    id="input"
+                    placeholder="Example: There is a huge pothole near my college entrance. It is dangerous for students and two-wheelers."
+                ></textarea>
+                <input type="file" id ="imageinput" accept="image/*">
+
+                <button onclick="processInput()">
+                    ✨ Analyze with NEXUS
+                </button>
+            </section>
+
+            <section id="result" class="result-card">
+                <div class="empty-state">
+                    <div class="empty-icon">🧠</div>
+                    <h2>Ready to Analyze</h2>
+                    <p>
+                        Your structured action will appear here.
+                    </p>
+                </div>
+            </section>
+
+        </main>
+
+        <footer>
+            <span>NEXUS</span>
+            <span>•</span>
+            <span>Gemini-powered</span>
+            <span>•</span>
+            <span>PromptWars × TechVerse</span>
+        </footer>
+
+    </div>
+
+    <script>
+        async function processInput() {
+            const input = document.getElementById("input").value.trim();
+            const result = document.getElementById("result");
+
+            if (!input) {
+                alert("Please enter a problem first.");
+                return;
+            }
+
+            result.innerHTML = `
+                <div class="loading">
+                    <div class="loader"></div>
+                    <h2>NEXUS is analyzing...</h2>
+                    <p>Converting human intent into structured action.</p>
+                </div>
+            `;
+
+            try {
+                const response = await fetch("http://localhost:3000/analyze", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ input: input })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || "Something went wrong");
+                }
+
+                result.innerHTML = `
+                    <div class="result-header">
+                        <div>
+                            <span class="result-label">NEXUS OUTPUT</span>
+                            <h2>Structured Action</h2>
+                        </div>
+                        <div class="success">✓ ANALYZED</div>
+                    </div>
+
+                    <div class="result-grid">
+
+                        <div class="result-item">
+                            <span>Category</span>
+                            <strong>${data.category}</strong>
+                        </div>
+
+                        <div class="result-item">
+                            <span>Urgency</span>
+                            <strong>${data.urgency}</strong>
+                        </div>
+
+                        <div class="result-item wide">
+                            <span>Issue</span>
+                            <strong>${data.issue}</strong>
+                        </div>
+
+                        <div class="result-item">
+                            <span>Location</span>
+                            <strong>${data.location}</strong>
+                        </div>
+
+                        <div class="result-item">
+                            <span>Affected Users</span>
+                            <strong>${data.affectedUsers}</strong>
+                        </div>
+
+                        <div class="result-item wide">
+                            <span>Evidence</span>
+                            <strong>${data.evidence}</strong>
+                        </div>
+
+                        <div class="result-item wide">
+                            <span>Missing Information</span>
+                            <strong>${data.missingInformation}</strong>
+                        </div>
+
+                        <div class="action-box wide">
+                            <span>⚡ Recommended Action</span>
+                            <strong>${data.recommendedAction}</strong>
+                        </div>
+
+                        <div class="result-item">
+                            <span>Confidence</span>
+                            <strong>${data.confidence}</strong>
+                        </div>
+
+                        <div class="result-item">
+                            <span>Verification Notes</span>
+                            <strong>${data.verificationNotes}</strong>
+                        </div>
+
+                    </div>
+                `;
+
+            } catch (error) {
+                console.error(error);
+
+                result.innerHTML = `
+                    <div class="error-box">
+                        <h2>❌ NEXUS Connection Error</h2>
+                        <p>${error.message}</p>
+                        <small>Make sure the NEXUS backend is running.</small>
+                    </div>
+                `;
+            }
+        }
+    </script>
+
+</body>
+</html>
